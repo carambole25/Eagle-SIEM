@@ -46,6 +46,7 @@ bash installation_agent_linux.sh
 ![architecture v1 schema](img/architecture.png)
 
 ## ToDo for v2
+- [ ] httpS for ui
 - [ ] auth system for ui
 - [ ] installation tutorial and powershell script for windows
 - [ ] make the ui less catastrophic
