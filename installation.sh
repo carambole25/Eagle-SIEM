@@ -30,4 +30,7 @@ mkdir agent/linux/save
 zip -r agent_linux.zip agent/linux
 mv agent_linux.zip infra/ui
 
+zip -r agent_windows.zip agent/windows
+mv agent_windows.zip infra/ui
+
 sudo docker compose -f infra/docker-compose.yml up
