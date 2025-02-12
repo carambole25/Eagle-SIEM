@@ -17,5 +17,5 @@ CREATE TABLE IF NOT EXISTS ui_users (
     username TEXT,
     pass TEXT
 );
-INSERT INTO users (username, password) 
+INSERT INTO ui_users (username, pass) 
 VALUES ('admin', '$2y$10$jQIbh/FMEPJFJw1NyiIVHupksDNhSPCotRKtk.LElUfmKYXMG0QO6')
