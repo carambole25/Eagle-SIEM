@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "default ui password is : defaultnotsecurepwd"
+echo "change it after first use (press enter to confirm)"
+read ok
+
 echo "root mdp for the bdd :"
 read rootpwd
 sed -i "s/changeme_rootpwd/$rootpwd/g" infra/docker-compose.yml
