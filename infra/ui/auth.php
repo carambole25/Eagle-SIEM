@@ -1,5 +1,9 @@
 <?php
 
+function base64UrlEncode($data) {
+    return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($data));
+}
+
 if (isset($_POST['username']) &&  isset($_POST['password'])) {
     $host = 'db';
     $dbname = 'eagle_db';
@@ -26,8 +30,12 @@ if (isset($_POST['username']) &&  isset($_POST['password'])) {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['pass'])) {
-        echo "Connexion OK !";
-        $_SESSION['user'] = $user;
+        $base64UrlHeader = base64UrlEncode(json_encode(["alg" => "HS256", "typ" => "JWT"]));
+        $base64UrlPayload = base64UrlEncode(json_encode(["user" => $user['username']]));
+        $base64UrlSignature = hash_hmac('sha256', $base64UrlHeader . '.' . $base64UrlPayload, "changeme_MYSQL_PASSWORD", true);
+        $base64UrlSignature = base64UrlEncode($base64UrlSignature);
+        $JWT = $base64UrlHeader . '.' . $base64UrlPayload . '.' . $base64UrlSignature;
+        setcookie("token", $JWT, time() + 3600, "/", "", false, true);
     } else {
         echo "Mauvais login ou mdp";
     }
