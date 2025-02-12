@@ -20,6 +20,10 @@ sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/generate_api_key.p
 sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/index.php
 sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/auth.php
 
+# The JWT secret key is currently the MySql Root password, fixe that later
+sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/jwt.php
+
+
 
 echo "bdd : localhost:3306";
 echo "phpmyadmin : localhost:7777 (for debug)";

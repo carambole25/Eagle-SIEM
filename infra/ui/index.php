@@ -1,58 +1,62 @@
 <?php
-$host = 'db';
-$dbname = 'eagle_db';
-$username = 'changeme_MYSQL_USER';
-$password = 'changeme_MYSQL_PASSWORD';
 
+include('jwt.php');
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+if (isset($_COOKIE['token']) && validateToken($_COOKIE['token'])){
+    $host = 'db';
+    $dbname = 'eagle_db';
+    $username = 'changeme_MYSQL_USER';
+    $password = 'changeme_MYSQL_PASSWORD';
 
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
+    try {
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
 
-# ça ressemble à un injection sql mais c'est volontaire
-# l'utilisateur peu query la bdd
-# faudra à l'avenir faire en sorte qu'il puisse que consulter les donners (readonly) et que events pas apikey
-if (isset($_GET['save'])){
-    $sql = "INSERT INTO `save_query`(`query`) VALUES (?)";
-    $stmt= $pdo->prepare($sql);
-    $stmt->execute([$_GET['query']]);
-} else {
-    if (isset($_GET['query'])){
-        $query = $_GET['query']; 
-    } else {
-        $query = "SELECT * FROM `events`";
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        die("Erreur de connexion : " . $e->getMessage());
     }
-    $sql = $query;
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    if ($results) {
-        echo "<table border='1'>";
-        echo "<tr>";
-        foreach (array_keys($results[0]) as $header) {
-            echo "<th>" . htmlspecialchars($header) . "</th>";
+    # ça ressemble à un injection sql mais c'est volontaire
+    # l'utilisateur peu query la bdd
+    # faudra à l'avenir faire en sorte qu'il puisse que consulter les données (readonly) et que events pas apikey
+    if (isset($_GET['save'])){
+        $sql = "INSERT INTO `save_query`(`query`) VALUES (?)";
+        $stmt= $pdo->prepare($sql);
+        $stmt->execute([$_GET['query']]);
+    } else {
+        if (isset($_GET['query'])){
+            $query = $_GET['query']; 
+        } else {
+            $query = "SELECT * FROM `events`";
         }
-        echo "</tr>";
+        $sql = $query;
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        foreach ($results as $row) {
+        if ($results) {
+            echo "<table border='1'>";
             echo "<tr>";
-            foreach ($row as $value) {
-                echo "<td>" . htmlspecialchars($value) . "</td>";
+            foreach (array_keys($results[0]) as $header) {
+                echo "<th>" . htmlspecialchars($header) . "</th>";
             }
             echo "</tr>";
+
+            foreach ($results as $row) {
+                echo "<tr>";
+                foreach ($row as $value) {
+                    echo "<td>" . htmlspecialchars($value) . "</td>";
+                }
+                echo "</tr>";
+            }
+            echo "</table>";
         }
-        echo "</table>";
     }
+}else{
+    header('Location: '."login.php");
 }
-
-
 
 ?>
 
