@@ -5,8 +5,8 @@ include('jwt.php');
 if (isset($_POST['username']) &&  isset($_POST['password'])) {
     $host = 'db';
     $dbname = 'eagle_db';
-    $username = 'carambole';
-    $password = 'Yolo456';
+    $username = 'changeme_MYSQL_USER';
+    $password = 'changeme_MYSQL_PASSWORD';
 
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
@@ -30,6 +30,7 @@ if (isset($_POST['username']) &&  isset($_POST['password'])) {
     if ($user && password_verify($password, $user['pass'])) {
         $JWT = createToken($user['username']);
         setcookie("token", $JWT, time() + 3600, "/", "", false, true);
+        header('Location: '."index.php");
     } else {
         echo "Mauvais login ou mdp";
     }

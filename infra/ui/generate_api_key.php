@@ -1,26 +1,30 @@
 <?php
-$host = 'db';
-$dbname = 'eagle_db';
-$username = 'changeme_MYSQL_USER';
-$password = 'changeme_MYSQL_PASSWORD';
 
+include('jwt.php');
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+if (isset($_COOKIE['token']) && validateToken($_COOKIE['token'])){
+    $host = 'db';
+    $dbname = 'eagle_db';
+    $username = 'changeme_MYSQL_USER';
+    $password = 'changeme_MYSQL_PASSWORD';
 
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-    
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
+    try {
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
 
-if (isset($_GET['key'])) {
-    $generated_key = htmlspecialchars($_GET['key']);
-    $sql = "INSERT INTO api_keys (api_key) VALUES (?)";
-    $stmt= $pdo->prepare($sql);
-    $stmt->execute([$generated_key]);
-    echo $generated_key;
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        
+    } catch (PDOException $e) {
+        die("Erreur de connexion : " . $e->getMessage());
+    }
+
+    if (isset($_GET['key'])) {
+        $generated_key = htmlspecialchars($_GET['key']);
+        $sql = "INSERT INTO api_keys (api_key) VALUES (?)";
+        $stmt= $pdo->prepare($sql);
+        $stmt->execute([$generated_key]);
+        echo $generated_key;
+    }
 }
 
 ?>
