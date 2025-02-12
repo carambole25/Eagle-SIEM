@@ -3,8 +3,8 @@
 if (isset($_POST['username']) &&  isset($_POST['password'])) {
     $host = 'db';
     $dbname = 'eagle_db';
-    $username = 'MYSQL_USER';
-    $password = 'MYSQL_PASSWORD';
+    $username = 'changeme_MYSQL_USER';
+    $password = 'changeme_MYSQL_PASSWORD';
 
     try {
         $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
