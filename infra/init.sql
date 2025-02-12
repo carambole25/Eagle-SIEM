@@ -12,3 +12,10 @@ CREATE TABLE IF NOT EXISTS save_query (
     id INT AUTO_INCREMENT PRIMARY KEY,
     query TEXT
 );
+CREATE TABLE IF NOT EXISTS ui_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username TEXT,
+    pass TEXT
+);
+INSERT INTO users (username, password) 
+VALUES ('admin', '$2y$10$jQIbh/FMEPJFJw1NyiIVHupksDNhSPCotRKtk.LElUfmKYXMG0QO6')
