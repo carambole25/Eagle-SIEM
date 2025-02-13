@@ -27,7 +27,8 @@ sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/auth.php
 # The JWT secret key is currently the MySql Root password, fixe that later
 sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/jwt.php
 
-
+# Generate the self signed ssl key
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout infra/localhost.key -out infra/localhost.crt -subj "/C=US/ST=YourState/L=YourCity/O=YourOrganization/CN=localhost"
 
 echo "bdd : localhost:3306";
 echo "phpmyadmin : localhost:7777 (for debug)";
