@@ -38,8 +38,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_php_ui
+    container_name: ui
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       - ./ui/:/var/www/html
       - ./ui/log:/var/log/apache2
-    ports:
-      - 80:80

@@ -10,10 +10,14 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) pdo pdo_mysql gd zip
 
-RUN a2enmod rewrite
+COPY localhost.crt /etc/ssl/certs/localhost.crt
+COPY localhost.key /etc/ssl/private/localhost.key
+COPY ./my-httpd-vhosts.conf /etc/apache2/sites-available/my-ssl.conf
+RUN a2enmod ssl && \
+    a2enmod rewrite && \
+    a2dissite 000-default default-ssl && \
+    a2ensite my-ssl
 
 RUN chmod -R 755 /var/log/apache2
 
 WORKDIR /var/www/html
-
-EXPOSE 80
