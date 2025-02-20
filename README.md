@@ -52,3 +52,4 @@ bash installation_agent_linux.sh
 - [ ] make the ui less catastrophic
 - [ ] adding ids functionality for linux
 - [ ] adding ids functionality for windows
+- [ ] regex owasp module for http logs
