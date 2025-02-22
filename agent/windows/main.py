@@ -2,10 +2,19 @@ import os
 from evtx import PyEvtxParser
 import subprocess
 
-API_KEY = open("conf/api_key",'r').read().replace("\n", "")
-HOSTNAME = open("conf/hostname.conf",'r').read().replace("\n", "")
-EVTX_CONF_PATH = "conf/evtx_srv.lst"
-SAVE_START_PATH = "save/cache_"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+api_key_path = os.path.join(script_dir, "conf", "api_key")
+API_KEY = open(api_key_path, 'r').read().replace("\n", "")
+
+hostname_path = os.path.join(script_dir, "conf", "hostname.conf")
+HOSTNAME = open(hostname_path, 'r').read().replace("\n", "")
+
+evtx_conf_path = os.path.join(script_dir, "conf", "evtx_srv.lst")
+EVTX_CONF_PATH = evtx_conf_path
+
+save_start_path = os.path.join(script_dir, "save", "cache_")
+SAVE_START_PATH = save_start_path
 
 def save_new_last_event_id(end_path, to_save):
     save = SAVE_START_PATH+end_path.split('\\')[-1]+".cache"
@@ -48,6 +57,7 @@ def read_conf(evtx_conf_path):
 def main():
     conf = read_conf(EVTX_CONF_PATH)
     for c in conf:
+        print(c)
         c.append(read_save(c[0])) # on rajoute le dernier event id lu si sauvegardé
         last_event_id = read_evtx(c[0], c[1], c[2])
         save_new_last_event_id(c[0], last_event_id)
