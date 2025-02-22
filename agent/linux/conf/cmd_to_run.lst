@@ -1,0 +1,5 @@
+cat /etc/passwd
+systemctl list-units --type=service --state=running
+ss -tulnp
+crontab -l
+lsmod
