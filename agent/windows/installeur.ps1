@@ -1,3 +1,5 @@
+mkdir save
+
 $ip_indexer = Read-Host 'Ip of the indexer'
 (Get-Content -Path 'main.py') -replace 'IP_INDEXER', $ip_indexer | Set-Content -Path main.py
 
