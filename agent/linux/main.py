@@ -4,6 +4,8 @@ import json
 import os
 import sys
 
+import hids_func
+
 # aller le répertoire où se trouve le script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -49,4 +51,5 @@ def main():
             send_to_bdd(log)
 
 if __name__ == '__main__':
+    hids_func.main()
     main()
