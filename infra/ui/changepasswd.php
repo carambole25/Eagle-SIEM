@@ -24,7 +24,7 @@ if (isset($_COOKIE['token']) && validateToken($_COOKIE['token'])){
         $sql = "UPDATE ui_users SET pass = (?) WHERE username = 'admin'";
         $stmt= $pdo->prepare($sql);
         $stmt->execute([$hash_new_password]);
-        header('Location: '."login.php");
+        header('Location: '."index.php");
     }
 }else{
     header('Location: '."login.php");
