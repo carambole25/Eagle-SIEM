@@ -30,7 +30,7 @@ if (isset($_POST['username']) &&  isset($_POST['password'])) {
     if ($user && password_verify($password, $user['pass'])) {
         $JWT = createToken($user['username']);
         setcookie("token", $JWT, time() + 3600, "/", "", false, true);
-        header('Location: '."index.php");
+        header('Location: '."changepasswd.php");
     } else {
         echo "Mauvais login ou mdp";
     }

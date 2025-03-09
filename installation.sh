@@ -15,6 +15,7 @@ sed -i "s/changeme_MYSQL_USER/$MYSQL_USER/g" infra/indexer/index.php
 sed -i "s/changeme_MYSQL_USER/$MYSQL_USER/g" infra/ui/generate_api_key.php
 sed -i "s/changeme_MYSQL_USER/$MYSQL_USER/g" infra/ui/index.php
 sed -i "s/changeme_MYSQL_USER/$MYSQL_USER/g" infra/ui/auth.php
+sed -i "s/changeme_MYSQL_USER/$MYSQL_USER/g" infra/ui/changepasswd.php
 
 echo "MYSQL_PASSWORD :"
 read MYSQL_PASSWORD
@@ -23,6 +24,7 @@ sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/indexer/index.php
 sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/generate_api_key.php
 sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/index.php
 sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/auth.php
+sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/changepasswd.php
 
 # The JWT secret key is currently the MySql Root password, fixe that later
 sed -i "s/changeme_MYSQL_PASSWORD/$MYSQL_PASSWORD/g" infra/ui/jwt.php
