@@ -44,4 +44,4 @@ mv agent_linux.zip infra/ui
 zip -r agent_windows.zip agent/windows
 mv agent_windows.zip infra/ui
 
-sudo docker compose -f infra/docker-compose.yml up
+docker compose -f infra/docker-compose.yml up

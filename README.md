@@ -49,7 +49,7 @@ bash installation_agent_linux.sh
 - [X] httpS for ui
 - [X] auth system for ui
 - [ ] change the ui password in the ui
-- [ ] update the installation script to not use sudo docker
+- [X] update the installation script to not use sudo docker
 - [X] installation tutorial and powershell script for windows
 - [ ] make the ui less catastrophic
 - [ ] adding ids functionality for linux
