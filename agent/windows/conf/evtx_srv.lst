@@ -1,5 +1,5 @@
 C:\Windows\System32\winevt\Logs\Microsoft-Windows-Windows Defender%4Operational.evtx | 1116</EventID>,1117</EventID>,1118</EventID>,5007</EventID>,1006</EventID>
-C:\Windows\System32\winevt\Logs\Security.evtx | 4624</EventID>,4625</EventID>,4648</EventID>,4698</EventID>,4720</EventID>,4726</EventID>,4740</EventID>,4756</EventID>,4776</EventID>,4798</EventID>,5140</EventID>,5145</EventID>
+C:\Windows\System32\winevt\Logs\Security.evtx | 4624</EventID>,4625</EventID>,4648</EventID>,4698</EventID>,4720</EventID>,4726</EventID>,4740</EventID>,4756</EventID>,4776</EventID>,4798</EventID>,5140</EventID>,5145</EventID>,4672</EventID>,4634</EventID>
 C:\Windows\System32\winevt\Logs\System.evtx | 7030</EventID>,7045</EventID>,4703</EventID>
 C:\Windows\System32\winevt\Logs\Application.evtx | 1000</EventID>,1026</EventID>
 C:\Windows\System32\winevt\Logs\Microsoft-Windows-WFP%4Operational.evtx | 5152</EventID>,5153</EventID>
