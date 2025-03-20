@@ -1,28 +1,29 @@
 import threading
 import time
 import datetime
-from scapy.all import sniff, DNS, DNSQR
+from scapy.all import sniff, DNS, DNSQR, IP
 
-packets_list = []
-
+# Conf
 LOG_PATH = "eagle_nids.log"
+allowed_dns_ip = [i.replace('\n', '') for i in open("conf/allowed_dns_ip", "r").readlines()]
 
+# Global
+packets_list = []
 date = str(datetime.datetime.now())
 
 # --------- FONCTION DE DETECTION
 def test_dns(p):
-    # for debug
-    print("-----------------------")
-    #print(p.show())
-    print("-----------------------")
+    global allowed_dns_ip
+    
+    # DNS spoofing
+    if p.qr == 1 and p[IP].src not in allowed_dns_ip:
+        write_alert(f"An IP address not specified in conf/allowed_dns_ip responded to a DNS query. {p[IP].src}\n")
     
     # DNS tunneling
-    domain_name = p[DNSQR].qname.decode()
-    if len(domain_name) > 30:
+    if len(p[DNSQR].qname.decode()) > 30:
         write_alert(f"A domain name exceeds 30 characters. This could be DNS tunneling. {domain_name}\n")
 
     # DNS zone transfer
-    print(p.qd.qtype)
     if p.qd.qtype == 252: # 252 = AXFR record
         write_alert(f"Someone attempted to perform a DNS zone transfer on this machine. This attempt could be used to disclose informations or conduct a denial of service attack.\n")
 
@@ -42,11 +43,8 @@ def analyse():
         for p in packets_list:
             if p.haslayer(DNS):
                 test_dns(p)
-
-
+                # Ici on rajoute les fonctions de détection pour chaque protocol testé
                 packets_list.pop(0)
-
-
             else:
                 print(f"{p.summary()}")
                 packets_list.pop(0)
@@ -55,7 +53,6 @@ def analyse():
 def write_alert(alert):
     global date
     alert = date + " : " + alert
-    print(alert)
     open(LOG_PATH, "a+").write(alert)
 
 def main():
