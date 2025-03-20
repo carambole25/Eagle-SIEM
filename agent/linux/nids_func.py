@@ -11,11 +11,20 @@ date = str(datetime.datetime.now())
 
 # --------- FONCTION DE DETECTION
 def test_dns(p):
-
+    # for debug
+    print("-----------------------")
+    #print(p.show())
+    print("-----------------------")
+    
     # DNS tunneling
     domain_name = p[DNSQR].qname.decode()
     if len(domain_name) > 30:
         write_alert(f"A domain name exceeds 30 characters. This could be DNS tunneling. {domain_name}\n")
+
+    # DNS zone transfer
+    print(p.qd.qtype)
+    if p.qd.qtype == 252: # 252 = AXFR record
+        write_alert(f"Someone attempted to perform a DNS zone transfer on this machine. This attempt could be used to disclose informations or conduct a denial of service attack.\n")
 
 # ---------
 
@@ -23,9 +32,9 @@ def test_dns(p):
 def sniffing():
     global packets_list
     while True:
-        p = sniff(iface="wlan0", count=1)
-        p.summary()
-        packets_list.append(p[0])
+        p_by_10 = sniff(iface="wlan0", count=20)
+        for p in p_by_10:
+            packets_list.append(p)
 
 def analyse():
     global packets_list
@@ -33,6 +42,8 @@ def analyse():
         for p in packets_list:
             if p.haslayer(DNS):
                 test_dns(p)
+
+
                 packets_list.pop(0)
 
 
