@@ -13,8 +13,11 @@ packets_list = []
 date = str(datetime.datetime.now())
 
 # Global pour detections fréquence inabituel
+time_before_reset = 30
+## Si il y a 10 packet dhcp en 30 seconde on trigger une alert
 nb_packet_dhcp = 0
-nb_packet_dhcp_alert = 10
+nb_packet_dhcp_before_alert = 10
+
 
 # --------- FONCTION DE DETECTION
 def test_dns(p):
@@ -39,23 +42,13 @@ def test_dns(p):
 
 def test_dhcp(p):
     global nb_packet_dhcp
-    global nb_packet_dhcp_alert
+    global nb_packet_dhcp_before_alert
 
     nb_packet_dhcp += 1
 
-    if nb_packet_dhcp => nb_packet_dhcp_alert:
+    if nb_packet_dhcp >= nb_packet_dhcp_before_alert:
+        write_alert(f"{nb_packet_dhcp} DHCP packets were received in {time_before_reset} seconds. This may be a DHCP starvation attack.\n")
         nb_packet_dhcp = 0
-        write_alert(f"DHCP starvation ?\n")
-
-    # Toute les X secondes faudrait reset nb_packet_dhcp à 0
-    # ça va passer par un thread ) part je pense
-
-    print("--------------------")
-    print(nb_packet_dhcp)
-    print(nb_packet_dhcp_alert)
-    print(f"{p.show}")
-    print("--------------------")
-
 
 # ---------
 
@@ -86,12 +79,21 @@ def write_alert(alert):
     alert = date + " : " + alert
     open(LOG_PATH, "a+").write(alert)
 
+def reset_global_for_high_frequencies_detection():
+    global time_before_reset
+    global nb_packet_dhcp
+    # ici on rajoute toute les globals de detection de fréquence qu'on va reset tout les X secondes
+    time.sleep(time_before_reset)
+    nb_packet_dhcp = 0
+
 def main():
     recuperation_packets = threading.Thread(target=sniffing, daemon=True)
     analyse_packets = threading.Thread(target=analyse, daemon=True)
+    reset_global_for_high_frequencies_detection_thread = threading.Thread(target=reset_global_for_high_frequencies_detection, daemon=True)
 
     recuperation_packets.start()
     analyse_packets.start()
+    reset_global_for_high_frequencies_detection_thread.start()
 
     while True:
         pass
