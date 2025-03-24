@@ -6,6 +6,7 @@ from scapy.all import sniff, DNS, DNSQR, IP
 # Conf
 LOG_PATH = "eagle_nids.log"
 allowed_dns_ip = [i.replace('\n', '') for i in open("conf/allowed_dns_ip", "r").readlines()]
+suspicious_domains = [i.replace('\n', '') for i in open("conf/suspicious_domains", "r").readlines()]
 
 # Global
 packets_list = []
@@ -14,14 +15,19 @@ date = str(datetime.datetime.now())
 # --------- FONCTION DE DETECTION
 def test_dns(p):
     global allowed_dns_ip
+    global suspicious_domains
     
     # DNS spoofing
     if p.qr == 1 and p[IP].src not in allowed_dns_ip:
         write_alert(f"An IP address not specified in conf/allowed_dns_ip responded to a DNS query. {p[IP].src}\n")
+
+    # DNS suspicious domains
+    if p[DNSQR].qname.decode() in suspicious_domains:
+        write_alert(f"A suspicious domain was requested. {p[DNSQR].qname.decode()}\n")
     
     # DNS tunneling
     if len(p[DNSQR].qname.decode()) > 30:
-        write_alert(f"A domain name exceeds 30 characters. This could be DNS tunneling. {domain_name}\n")
+        write_alert(f"A domain name exceeds 30 characters. This could be DNS tunneling. {p[DNSQR].qname.decode()}\n")
 
     # DNS zone transfer
     if p.qd.qtype == 252: # 252 = AXFR record
