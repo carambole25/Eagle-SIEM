@@ -1,7 +1,7 @@
 import threading
 import time
 import datetime
-from scapy.all import sniff, DNS, DNSQR, IP
+from scapy.all import sniff, DNS, DNSQR, IP, DHCP
 
 # Conf
 LOG_PATH = "eagle_nids.log"
@@ -11,6 +11,10 @@ suspicious_domains = [i.replace('\n', '') for i in open("conf/suspicious_domains
 # Global
 packets_list = []
 date = str(datetime.datetime.now())
+
+# Global pour detections fréquence inabituel
+nb_packet_dhcp = 0
+nb_packet_dhcp_alert = 10
 
 # --------- FONCTION DE DETECTION
 def test_dns(p):
@@ -33,6 +37,26 @@ def test_dns(p):
     if p.qd.qtype == 252: # 252 = AXFR record
         write_alert(f"Someone attempted to perform a DNS zone transfer on this machine. This attempt could be used to disclose informations or conduct a denial of service attack.\n")
 
+def test_dhcp(p):
+    global nb_packet_dhcp
+    global nb_packet_dhcp_alert
+
+    nb_packet_dhcp += 1
+
+    if nb_packet_dhcp => nb_packet_dhcp_alert:
+        nb_packet_dhcp = 0
+        write_alert(f"DHCP starvation ?\n")
+
+    # Toute les X secondes faudrait reset nb_packet_dhcp à 0
+    # ça va passer par un thread ) part je pense
+
+    print("--------------------")
+    print(nb_packet_dhcp)
+    print(nb_packet_dhcp_alert)
+    print(f"{p.show}")
+    print("--------------------")
+
+
 # ---------
 
 # --------- CORE
@@ -49,11 +73,12 @@ def analyse():
         for p in packets_list:
             if p.haslayer(DNS):
                 test_dns(p)
-                # Ici on rajoute les fonctions de détection pour chaque protocol testé
-                packets_list.pop(0)
+            # Ici on rajoute les fonctions de détection pour chaque protocol testé
+            if p.haslayer(DHCP):
+                test_dhcp(p)
             else:
                 print(f"{p.summary()}")
-                packets_list.pop(0)
+            packets_list.pop(0)
         time.sleep(1)
 
 def write_alert(alert):
