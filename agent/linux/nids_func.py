@@ -18,6 +18,9 @@ time_before_reset = 30
 nb_packet_dhcp = 0
 nb_packet_dhcp_before_alert = 10
 
+## Si il y a 10 port (destination) différent en seconde on trigger une alert
+ports_trigger = []
+nb_ports_trigger_max = 30
 
 # --------- FONCTION DE DETECTION
 def test_dns(p):
@@ -50,6 +53,13 @@ def test_dhcp(p):
         write_alert(f"{nb_packet_dhcp} DHCP packets were received in {time_before_reset} seconds. This may be a DHCP starvation attack.\n")
         nb_packet_dhcp = 0
 
+def test_port_scanning():
+    global ports_trigger
+    global nb_ports_trigger_max
+    if len(ports_trigger) >= nb_ports_trigger_max:
+        write_alert(f"{nb_ports_trigger_max} ports were contacted within {time_before_reset} seconds. This may be a port scan. ports: {ports_trigger}\n")
+        ports_trigger = []
+
 # ---------
 
 # --------- CORE
@@ -64,13 +74,23 @@ def analyse():
     global packets_list
     while True:
         for p in packets_list:
+            try:
+                # Actuellement on récupère aussi les ports de destination des paquets que le pc envoie
+                if (p.dport) not in ports_trigger:
+                    ports_trigger.append(p.dport)
+                    test_port_scanning()
+            except:
+                pass
+
             if p.haslayer(DNS):
                 test_dns(p)
             # Ici on rajoute les fonctions de détection pour chaque protocol testé
-            if p.haslayer(DHCP):
+            elif p.haslayer(DHCP):
                 test_dhcp(p)
+
             else:
-                print(f"{p.summary()}")
+                #print(f"{p.show()}")
+                pass
             packets_list.pop(0)
         time.sleep(1)
 
@@ -85,6 +105,7 @@ def reset_global_for_high_frequencies_detection():
     # ici on rajoute toute les globals de detection de fréquence qu'on va reset tout les X secondes
     time.sleep(time_before_reset)
     nb_packet_dhcp = 0
+    ports_trigger = []
 
 def main():
     recuperation_packets = threading.Thread(target=sniffing, daemon=True)
